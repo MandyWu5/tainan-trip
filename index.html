@@ -247,6 +247,21 @@
       margin: 0;
       color: var(--muted);
     }
+    /* QR 碼：深色模式也維持白底黑點，手機才掃得到 */
+    .qr-box {
+      width: 200px;
+      background: #fff;
+      border: 2.5px solid var(--ink);
+      border-radius: 14px 4px 16px 6px / 6px 16px 4px 14px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 6px;
+      margin-bottom: 24px;
+    }
+    .qr-code {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
     footer {
       text-align: center;
       font-size: 15px;
@@ -409,7 +424,17 @@
           <span class="place">集合時間</span>
           <p class="note">示意：第一天 10:00，台南火車站前站大廳。</p>
         </li>
+        <li>
+          <span class="place">集合地點：新莊</span>
+        </li>
       </ol>
+    </section>
+
+    <section class="qr">
+      <h2>掃描分享</h2>
+      <div class="qr-box">
+        <svg viewBox="0 0 37 37" class="qr-code" role="img" aria-label="tainan-trip 網站的 QR 碼"><title>tainan-trip 網站的 QR 碼</title><path fill="#fff" d="M0 0h37v37h-37z"/><path stroke="#000" d="M4 4.5h7m1 0h1m4 0h1m2 0h1m1 0h3m1 0h7m-29 1h1m5 0h1m1 0h2m4 0h1m7 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m4 0h1m1 0h4m2 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h6m1 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h1m2 0h2m2 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h3m1 0h1m2 0h4m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h3m1 0h1m1 0h1m1 0h2m2 0h1m-21 1h1m1 0h2m1 0h3m3 0h2m4 0h2m3 0h1m2 0h1m1 0h2m-29 1h4m1 0h1m1 0h2m1 0h1m1 0h2m2 0h5m1 0h3m3 0h1m-29 1h3m1 0h1m1 0h8m2 0h2m2 0h1m1 0h2m2 0h2m-28 1h2m5 0h2m4 0h2m3 0h6m4 0h1m-28 1h2m1 0h1m1 0h1m1 0h1m2 0h2m4 0h1m2 0h1m4 0h2m-25 1h1m1 0h2m1 0h1m3 0h2m1 0h2m3 0h1m1 0h2m3 0h3m-29 1h1m1 0h1m3 0h1m2 0h1m3 0h1m2 0h7m1 0h1m1 0h3m-29 1h1m1 0h3m2 0h1m1 0h2m1 0h1m3 0h1m5 0h2m3 0h1m-27 1h2m3 0h1m2 0h1m4 0h2m3 0h3m1 0h3m1 0h1m-17 1h2m2 0h1m1 0h1m2 0h2m1 0h1m1 0h3m-28 1h1m1 0h1m2 0h4m1 0h2m1 0h5m2 0h1m2 0h2m1 0h1m-25 1h1m4 0h1m2 0h1m2 0h2m2 0h3m1 0h1m1 0h1m2 0h1m-26 1h1m2 0h3m2 0h6m1 0h11m-19 1h1m1 0h2m4 0h1m3 0h1m3 0h5m-29 1h7m1 0h2m2 0h1m1 0h1m2 0h4m1 0h1m1 0h2m1 0h1m-28 1h1m5 0h1m1 0h1m2 0h1m1 0h3m4 0h1m3 0h2m1 0h1m-28 1h1m1 0h3m1 0h1m2 0h4m4 0h1m2 0h5m1 0h1m-27 1h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h3m5 0h3m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h2m6 0h2m1 0h1m2 0h1m1 0h1m-29 1h1m5 0h1m3 0h1m2 0h3m4 0h1m2 0h3m1 0h1m-28 1h7m1 0h1m6 0h1m2 0h1m1 0h2m2 0h1m2 0h1"/></svg>
+      </div>
     </section>
   </main>
 
