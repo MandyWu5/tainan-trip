@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>一步一旅</title>
+  <script>
+    // 一打開就套用上次選的模式，避免先閃一下淺色
+    try {
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    } catch (e) {}
+  </script>
   <style>
     :root {
       --paper: #fffdf6;
@@ -13,6 +21,48 @@
       --mint: #c7eedf;
       --sky: #dcefff;
       --sun: #ffe68a;
+      --card: #fff;
+      --dots: rgba(42, 45, 58, 0.09);
+    }
+    /* ===== 深色模式 ===== */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #1f2126;
+      --ink: #ecebe6;
+      --muted: #c3c6cf;
+      --coral: #ff8a7c;
+      --mint: #3f6f61;
+      --sky: #262a32;
+      --card: #2d3038;
+      --dots: rgba(236, 235, 230, 0.07);
+    }
+    :root[data-theme="dark"] .hero h1 { text-shadow: 4px 4px 0 #8a6f1c; }
+    :root[data-theme="dark"] h2,
+    :root[data-theme="dark"] .time,
+    :root[data-theme="dark"] .go-down { color: #1d1f24; }
+    :root[data-theme="dark"] .compass circle { fill: var(--card); stroke: var(--ink); }
+    :root[data-theme="dark"] .compass-n { fill: var(--ink); }
+
+    .theme-toggle {
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top));
+      right: calc(12px + env(safe-area-inset-right));
+      z-index: 10;
+      width: 46px;
+      height: 46px;
+      padding: 0;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      background: var(--card);
+      color: var(--ink);
+      border: 2.5px solid var(--ink);
+      border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .theme-toggle:focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 3px;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -38,7 +88,7 @@
       text-align: center;
       background-color: var(--sky);
       /* 網點（screentone）效果 */
-      background-image: radial-gradient(rgba(42, 45, 58, 0.09) 1.2px, transparent 1.4px);
+      background-image: radial-gradient(var(--dots) 1.2px, transparent 1.4px);
       background-size: 10px 10px;
       border-bottom: 3px solid var(--ink);
     }
@@ -54,7 +104,7 @@
     .hero .sub {
       margin: 0;
       display: inline-block;
-      background: #fff;
+      background: var(--card);
       border: 2.5px solid var(--ink);
       border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
       padding: 4px 18px;
@@ -70,7 +120,7 @@
       position: relative;
       width: 100%;
       max-width: 720px;
-      background: #fff;
+      background: var(--card);
       border: 3px solid var(--ink);
       border-radius: 18px 6px 20px 8px / 8px 20px 6px 18px;
       box-shadow: 5px 5px 0 var(--ink);
@@ -111,7 +161,7 @@
       left: 83.3%;
       top: 42.8%;
       transform: translate(calc(-100% - 6px), calc(-100% - 12px));
-      background: #fff;
+      background: var(--card);
       border: 2.5px solid var(--ink);
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       padding: 4px 14px;
@@ -127,7 +177,7 @@
       bottom: -10px;
       width: 14px;
       height: 14px;
-      background: #fff;
+      background: var(--card);
       border-right: 2.5px solid var(--ink);
       border-bottom: 2.5px solid var(--ink);
       transform: skew(30deg) rotate(20deg);
@@ -169,7 +219,7 @@
     }
     li {
       position: relative;
-      background: #fff;
+      background: var(--card);
       border: 2.5px solid var(--ink);
       border-radius: 14px 4px 16px 6px / 6px 16px 4px 14px;
       box-shadow: 4px 4px 0 var(--ink);
@@ -211,6 +261,8 @@
   </style>
 </head>
 <body>
+  <button class="theme-toggle" type="button" aria-label="切換成深色模式" aria-pressed="false">🌙</button>
+
   <section class="hero">
     <h1>一步一旅</h1>
 
@@ -270,11 +322,11 @@
         </g>
 
         <!-- 指南針 -->
-        <g stroke="#2a2d3a" stroke-width="0.9" fill="none" stroke-linecap="round">
+        <g class="compass" stroke="#2a2d3a" stroke-width="0.9" fill="none" stroke-linecap="round">
           <circle cx="24" cy="132" r="8" fill="#fff" />
           <path d="M24 126 L26 132 L24 138 L22 132 Z" fill="#ff7a6b" />
         </g>
-        <text x="24" y="122" font-size="6" font-weight="700" text-anchor="middle" fill="#2a2d3a">N</text>
+        <text class="compass-n" x="24" y="122" font-size="6" font-weight="700" text-anchor="middle" fill="#2a2d3a">N</text>
 
         <!-- 台南標記 -->
         <circle class="pulse" cx="300" cy="67" r="3" />
@@ -362,5 +414,35 @@
   </main>
 
   <footer>祝旅途愉快 🙂</footer>
+
+  <script>
+    // 深色模式切換，並記住這次的選擇
+    (function () {
+      var root = document.documentElement;
+      var btn = document.querySelector(".theme-toggle");
+
+      function render() {
+        var dark = root.getAttribute("data-theme") === "dark";
+        btn.textContent = dark ? "☀️" : "🌙";
+        btn.setAttribute("aria-label", dark ? "切換成淺色模式" : "切換成深色模式");
+        btn.setAttribute("aria-pressed", dark ? "true" : "false");
+      }
+
+      btn.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") !== "dark";
+        if (dark) {
+          root.setAttribute("data-theme", "dark");
+        } else {
+          root.removeAttribute("data-theme");
+        }
+        try {
+          localStorage.setItem("theme", dark ? "dark" : "light");
+        } catch (e) {}
+        render();
+      });
+
+      render();
+    })();
+  </script>
 </body>
 </html>
