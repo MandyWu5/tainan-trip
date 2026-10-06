@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>一步一旅</title>
+  <style>
+    :root {
+      --paper: #fffdf6;
+      --ink: #2a2d3a;
+      --muted: #5c6070;
+      --coral: #ff7a6b;
+      --mint: #c7eedf;
+      --sky: #dcefff;
+      --sun: #ffe68a;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    /* ===== 開場：世界地圖 ===== */
+    .hero {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 32px 16px;
+      text-align: center;
+      background-color: var(--sky);
+      /* 網點（screentone）效果 */
+      background-image: radial-gradient(rgba(42, 45, 58, 0.09) 1.2px, transparent 1.4px);
+      background-size: 10px 10px;
+      border-bottom: 3px solid var(--ink);
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(46px, 15vw, 76px);
+      font-weight: 900;
+      letter-spacing: 6px;
+      line-height: 1.2;
+      color: var(--ink);
+      text-shadow: 4px 4px 0 var(--sun);
+    }
+    .hero .sub {
+      margin: 0;
+      display: inline-block;
+      background: #fff;
+      border: 2.5px solid var(--ink);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      padding: 4px 18px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .hero .hint {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .map-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      background: #fff;
+      border: 3px solid var(--ink);
+      border-radius: 18px 6px 20px 8px / 8px 20px 6px 18px;
+      box-shadow: 5px 5px 0 var(--ink);
+      padding: 8px;
+    }
+    .map-wrap svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .land {
+      fill: var(--mint);
+      stroke: var(--ink);
+      stroke-width: 1.1;
+      stroke-linejoin: round;
+    }
+    .wave {
+      fill: none;
+      stroke: #8ec5ef;
+      stroke-width: 1;
+      stroke-linecap: round;
+    }
+    .pulse {
+      fill: none;
+      stroke: var(--coral);
+      stroke-width: 1.2;
+      transform-origin: 300px 67px;
+      animation: pulse 1.8s ease-out infinite;
+    }
+    @keyframes pulse {
+      from { transform: scale(0.4); opacity: 1; }
+      to { transform: scale(2.4); opacity: 0; }
+    }
+    .map-inner { position: relative; }
+    .bubble {
+      position: absolute;
+      /* 對準地圖上台南的位置（300/360, (67-5)/145） */
+      left: 83.3%;
+      top: 42.8%;
+      transform: translate(calc(-100% - 6px), calc(-100% - 12px));
+      background: #fff;
+      border: 2.5px solid var(--ink);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      padding: 4px 14px;
+      font-size: 17px;
+      font-weight: 900;
+      white-space: nowrap;
+      color: var(--coral);
+    }
+    .bubble::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      bottom: -10px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-right: 2.5px solid var(--ink);
+      border-bottom: 2.5px solid var(--ink);
+      transform: skew(30deg) rotate(20deg);
+    }
+    .go-down {
+      display: inline-block;
+      margin-top: 4px;
+      background: var(--coral);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 10px 24px;
+      border: 2.5px solid var(--ink);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    /* ===== 行程 ===== */
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 16px 40px;
+    }
+    h2 {
+      display: inline-block;
+      font-size: 24px;
+      margin: 32px 0 16px;
+      padding: 2px 16px;
+      background: var(--sun);
+      border: 2.5px solid var(--ink);
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      transform: rotate(-2deg);
+    }
+    ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      position: relative;
+      background: #fff;
+      border: 2.5px solid var(--ink);
+      border-radius: 14px 4px 16px 6px / 6px 16px 4px 14px;
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .time {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--coral);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 0 10px;
+      line-height: 1.6;
+    }
+    .place {
+      display: block;
+      font-size: 21px;
+      font-weight: 800;
+      margin: 6px 0 4px;
+    }
+    .note {
+      margin: 0;
+      color: var(--muted);
+    }
+    footer {
+      text-align: center;
+      font-size: 15px;
+      color: var(--muted);
+      padding: 0 16px 32px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .pulse { animation: none; opacity: 0.6; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>一步一旅</h1>
+
+    <div class="map-wrap">
+      <div class="map-inner">
+      <svg viewBox="0 5 360 145" role="img" aria-label="手繪世界地圖，標出台南">
+        <defs>
+          <!-- 讓線條有一點手繪抖動感 -->
+          <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="3" />
+            <feDisplacementMap in="SourceGraphic" scale="1.6" />
+          </filter>
+        </defs>
+
+        <!-- 海浪小塗鴉 -->
+        <g class="wave">
+          <path d="M30 85 q3 -3 6 0 t6 0 t6 0" />
+          <path d="M45 110 q3 -3 6 0 t6 0" />
+          <path d="M140 62 q3 -3 6 0 t6 0" />
+          <path d="M150 108 q3 -3 6 0 t6 0 t6 0" />
+          <path d="M245 112 q3 -3 6 0 t6 0 t6 0" />
+          <path d="M335 80 q3 -3 6 0 t6 0" />
+        </g>
+
+        <g class="land" filter="url(#rough)">
+          <!-- 北美洲 -->
+          <path d="M12 24 L20 20 L40 20 L55 20 L85 18 L100 17 L115 28 L120 35 L127 43 L114 46 L110 49 L104 55 L99 59 L100 65 L96 60 L90 61 L83 64 L83 69 L88 72 L93 69 L92 75 L97 81 L102 82 L100 83 L95 79 L88 76 L75 70 L70 66 L65 60 L63 57 L59 55 L56 50 L56 42 L50 36 L45 32 L35 30 L28 31 L22 33 L15 35 L18 30 L14 26 Z" />
+          <!-- 格陵蘭 -->
+          <path d="M135 30 L160 20 L160 10 L140 7 L120 10 L125 15 L130 22 Z" />
+          <!-- 冰島 -->
+          <path d="M157 25 L163 23 L166 25 L161 27 Z" />
+          <!-- 南美洲 -->
+          <path d="M102 82 L108 78 L118 80 L128 85 L130 90 L145 95 L145 99 L140 112 L132 116 L127 124 L122 128 L115 132 L114 140 L111 145 L106 140 L107 130 L109 120 L110 108 L104 104 L99 95 L100 90 L102 86 Z" />
+          <!-- 歐亞大陸 -->
+          <path d="M170 54 L171 47 L178 46 L175 42 L182 39 L188 36 L190 32 L185 28 L195 21 L208 19 L220 23 L240 21 L250 17 L260 17 L280 13 L295 16 L320 18 L340 20 L358 22 L358 25 L350 30 L340 30 L336 39 L330 31 L320 36 L315 46 L310 48 L307 52 L306 55 L302 50 L298 52 L302 60 L300 65 L294 68 L288 69 L286 73 L289 78 L285 81 L280 77 L283 89 L278 82 L278 74 L274 73 L272 68 L267 69 L260 75 L258 82 L253 72 L250 68 L246 65 L237 65 L236 63 L231 66 L239 68 L232 74 L223 78 L219 70 L214 62 L215 58 L216 54 L207 53 L206 50 L203 50 L202 53 L199 48 L193 45 L196 49 L196 52 L192 46 L188 46 L183 47 L180 51 L178 53 L174 54 Z" />
+          <!-- 英國 -->
+          <path d="M175 40 L181 39 L180 37 L177 34 L175 32 L174 35 L177 36 L176 38 Z" />
+          <!-- 非洲 -->
+          <path d="M163 69 L163 75 L168 82 L172 85 L180 85 L189 86 L189 91 L193 96 L192 107 L195 117 L198 124 L205 124 L212 118 L215 110 L220 105 L220 95 L223 90 L231 79 L223 78 L218 72 L213 62 L212 59 L200 58 L190 53 L180 54 L174 55 L170 60 L164 66 Z" />
+          <!-- 馬達加斯加 -->
+          <ellipse cx="227" cy="109" rx="2.5" ry="6" />
+          <!-- 日本 -->
+          <path d="M310 59 L315 56 L320 55 L322 50 L321 48 L324 46 L321 45 L320 49 L317 53 L312 55 Z" />
+          <!-- 台灣 -->
+          <path d="M301 64.5 L302.3 66 L301.2 68.5 L299.8 67 Z" />
+          <!-- 菲律賓 -->
+          <path d="M301 72 L304 74 L305 80 L302 82 L300 77 Z" />
+          <!-- 東南亞群島 -->
+          <path d="M276 84 L284 92 L286 96 L282 94 L275 87 Z" />
+          <path d="M290 86 L297 85 L298 91 L292 94 L289 90 Z" />
+          <path d="M313 93 L322 94 L328 98 L320 99 L314 97 Z" />
+          <!-- 澳洲 -->
+          <path d="M294 112 L295 124 L303 124 L311 121 L318 125 L326 129 L330 127 L333 118 L326 109 L322 101 L316 102 L311 102 L306 104 L302 108 Z" />
+          <!-- 紐西蘭 -->
+          <path d="M353 126 L356 129 L353 133 L351 131 Z" />
+          <path d="M350 134 L352 136 L347 141 L346 138 Z" />
+        </g>
+
+        <!-- 指南針 -->
+        <g stroke="#2a2d3a" stroke-width="0.9" fill="none" stroke-linecap="round">
+          <circle cx="24" cy="132" r="8" fill="#fff" />
+          <path d="M24 126 L26 132 L24 138 L22 132 Z" fill="#ff7a6b" />
+        </g>
+        <text x="24" y="122" font-size="6" font-weight="700" text-anchor="middle" fill="#2a2d3a">N</text>
+
+        <!-- 台南標記 -->
+        <circle class="pulse" cx="300" cy="67" r="3" />
+        <circle cx="300" cy="67" r="2.4" fill="#ff7a6b" stroke="#2a2d3a" stroke-width="0.9" />
+      </svg>
+      <div class="bubble">台南出發！</div>
+      </div>
+    </div>
+
+    <p class="sub">台南兩天一夜</p>
+    <p class="hint">（店名與時間為示意，之後更新）</p>
+    <a class="go-down" href="#trip">往下看行程 ↓</a>
+  </section>
+
+  <main id="trip">
+    <section>
+      <h2>第一天</h2>
+      <ol>
+        <li>
+          <span class="time">10:00</span>
+          <span class="place">台南火車站集合</span>
+          <p class="note">大家在前站大廳碰面，出發！</p>
+        </li>
+        <li>
+          <span class="time">11:30</span>
+          <span class="place">示意牛肉湯店</span>
+          <p class="note">早午餐先來一碗熱騰騰的牛肉湯。</p>
+        </li>
+        <li>
+          <span class="time">14:00</span>
+          <span class="place">赤崁樓一帶</span>
+          <p class="note">逛古蹟、拍照，順便散步附近小巷。</p>
+        </li>
+        <li>
+          <span class="time">18:00</span>
+          <span class="place">示意夜市</span>
+          <p class="note">晚餐就在夜市邊走邊吃。</p>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>第二天</h2>
+      <ol>
+        <li>
+          <span class="time">09:00</span>
+          <span class="place">示意早餐店</span>
+          <p class="note">吃完在地早餐再開始一天。</p>
+        </li>
+        <li>
+          <span class="time">10:30</span>
+          <span class="place">安平老街</span>
+          <p class="note">逛老街、買伴手禮。</p>
+        </li>
+        <li>
+          <span class="time">13:00</span>
+          <span class="place">示意甜點店</span>
+          <p class="note">午後吃點冰或甜點休息一下。</p>
+        </li>
+        <li>
+          <span class="time">16:00</span>
+          <span class="place">台南火車站解散</span>
+          <p class="note">帶著戰利品回家，下次見！</p>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>行前提醒</h2>
+      <ol>
+        <li>
+          <span class="place">天氣</span>
+          <p class="note">示意：晴時多雲，白天約 30 度，記得防曬。</p>
+        </li>
+        <li>
+          <span class="place">要帶的東西</span>
+          <p class="note">示意：身分證、悠遊卡、雨傘、行動電源。</p>
+        </li>
+        <li>
+          <span class="place">集合時間</span>
+          <p class="note">示意：第一天 10:00，台南火車站前站大廳。</p>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>祝旅途愉快 🙂</footer>
+</body>
+</html>
